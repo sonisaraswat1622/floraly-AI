@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Floraly — AI Cycle Intelligence</title>
+
+<!-- PWA Meta Tags -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#993556">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Floraly">
+<meta name="application-name" content="Floraly">
+<meta name="msapplication-TileColor" content="#993556">
+<meta name="msapplication-TileImage" content="icons/icon-144.png">
+
+<!-- Apple Touch Icons -->
+<link rel="apple-touch-icon" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72.png">
+
+<!-- SEO -->
+<meta name="description" content="Floraly — AI-powered period tracking with conversational health insights, pattern analysis, and doctor visit prep reports. Your cycle, understood.">
+<meta name="keywords" content="period tracker, cycle tracking, AI health, femtech, menstrual health">
+<meta property="og:title" content="Floraly — AI Cycle Intelligence">
+<meta property="og:description" content="AI-powered period tracking. Conversational insights, pattern analysis, and doctor visit prep. Built by Soni Saraswat.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icons/icon-512.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FAFAF8;color:#1C2331;min-height:100vh}
+.app{max-width:680px;margin:0 auto;padding:1.25rem 1rem}
+
+/* HEADER */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.logo{font-size:24px;font-weight:600;color:#1C2331;letter-spacing:-0.3px}
+.logo span{color:#993556}
+.logo-sub{font-size:12px;color:#6B7A90;margin-top:1px}
+.phase-pill{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500}
+
+/* NAV */
+.nav{display:flex;gap:4px;margin-bottom:16px;background:#F0EEE9;border-radius:12px;padding:4px}
+.nav button{flex:1;padding:8px 2px;border:none;background:transparent;border-radius:8px;font-size:12px;color:#6B7A90;cursor:pointer;transition:all .15s;font-family:inherit}
+.nav button.active{background:#FFFFFF;color:#1C2331;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:block}
+
+/* CARDS */
+.card{background:#FFFFFF;border:0.5px solid #E2DDD6;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px}
+.card-label{font-size:12px;color:#6B7A90;font-weight:500;margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+
+/* METRICS */
+.mrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.mbox{background:#F5F3EE;border-radius:8px;padding:12px;text-align:center}
+.mval{font-size:24px;font-weight:500;color:#1C2331}
+.mlbl{font-size:11px;color:#6B7A90;margin-top:2px}
+
+/* PILLS */
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.p-rose{background:#FBEAF0;color:#72243E}
+.p-blue{background:#E6F1FB;color:#0C447C}
+.p-purple{background:#EEEDFE;color:#3C3489}
+.p-amber{background:#FAEEDA;color:#633806}
+.p-green{background:#EAF3DE;color:#27500A}
+
+/* CYCLE DOTS */
+.day-row{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
+.d{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;border:0.5px solid #D2D2D7;color:#6B7A90;cursor:default}
+.d.period{background:#FBEAF0;color:#72243E;border-color:#ED93B1}
+.d.fertile{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.d.ov{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.d.today{border:2px solid #1C2331;color:#1C2331;font-weight:600}
+.d.future{opacity:.35;border-style:dashed}
+.d.past{opacity:.5}
+
+/* HISTORY */
+.hrow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid #EAE6DC;font-size:13px}
+.hrow:last-child{border-bottom:none}
+
+/* CHIPS */
+.chip-group{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{padding:6px 12px;border-radius:20px;border:0.5px solid #D0CBC2;background:#FFFFFF;font-size:12px;cursor:pointer;color:#6B7A90;transition:all .15s;font-family:inherit}
+.chip:hover{border-color:#993556;color:#993556}
+.chip.on{background:#FBEAF0;border-color:#ED93B1;color:#72243E;font-weight:500}
+
+/* INPUTS */
+input[type=text],input[type=date],select,textarea{width:100%;padding:9px 12px;border:0.5px solid #D0CBC2;border-radius:8px;font-size:14px;background:#FFFFFF;color:#1C2331;font-family:inherit;outline:none;transition:border-color .15s;margin-bottom:10px}
+input[type=text]:focus,input[type=date]:focus,select:focus,textarea:focus{border-color:#993556}
+input[type=range]{width:100%;accent-color:#993556}
+
+/* BUTTONS */
+.btn-primary{width:100%;padding:12px;background:#993556;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .15s;margin-top:4px}
+.btn-primary:hover{opacity:.88}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary{width:100%;padding:11px;background:transparent;color:#1C2331;border:0.5px solid #D0CBC2;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;margin-top:6px;transition:all .15s}
+.btn-secondary:hover{border-color:#993556;color:#993556}
+
+/* INSIGHT CARDS */
+.icard{border-left:2px solid;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:10px;background:#F5F3EE}
+.icard.rose{border-color:#ED93B1}.icard.blue{border-color:#85B7EB}
+.icard.purple{border-color:#AFA9EC}.icard.amber{border-color:#EF9F27}.icard.green{border-color:#97C459}
+.ititle{font-size:13px;font-weight:500;color:#1C2331;margin-bottom:3px}
+.ibody{font-size:12px;color:#6B7A90;line-height:1.55}
+
+/* BARS */
+.bar-row{margin-bottom:10px}
+.bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.bar-bg{height:6px;background:#EAE6DC;border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .5s}
+
+/* CHAT */
+.chat-box{height:280px;overflow-y:auto;border:0.5px solid #E2DDD6;border-radius:8px;padding:12px;margin-bottom:8px;background:#F5F3EE;display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:8px;align-items:flex-start}
+.msg.u{flex-direction:row-reverse}
+.bub{max-width:78%;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.55}
+.msg.ai .bub{background:#FFFFFF;border:0.5px solid #E2DDD6;color:#1C2331;border-radius:12px 12px 12px 3px}
+.msg.u .bub{background:#993556;color:#FFFFFF;border-radius:12px 12px 3px 12px}
+.av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.av.floraly{background:#FBEAF0;color:#72243E;border:0.5px solid #ED93B1}
+.av.user{background:#EAE6DC;color:#6B7A90}
+.chat-inp-row{display:flex;gap:8px}
+.chat-inp-row input{flex:1;padding:9px 12px;border:0.5px solid #D0CBC2;border-radius:8px;font-size:13px;background:#FFFFFF;color:#1C2331;font-family:inherit;outline:none;margin:0}
+.chat-inp-row input:focus{border-color:#993556}
+.chat-inp-row button{padding:9px 16px;background:#993556;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:inherit}
+.chat-inp-row button:hover{opacity:.88}
+.chat-inp-row button:disabled{opacity:.4;cursor:not-allowed}
+.sug-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.sug{padding:5px 11px;border-radius:20px;border:0.5px solid #D0CBC2;background:#FFFFFF;font-size:11px;cursor:pointer;color:#6B7A90;transition:all .15s;font-family:inherit}
+.sug:hover{border-color:#993556;color:#993556}
+
+/* REPORT */
+.report-block{margin-bottom:16px}
+.report-block h3{font-size:13px;font-weight:600;color:#1C2331;margin-bottom:8px;padding-bottom:5px;border-bottom:0.5px solid #EAE6DC}
+.doc-q{display:flex;gap:8px;margin-bottom:7px}
+.doc-q-num{font-size:12px;font-weight:600;color:#378ADD;flex-shrink:0;margin-top:1px}
+.doc-q-text{font-size:13px;color:#6B7A90;line-height:1.5}
+.concern-item{display:flex;gap:8px;margin-bottom:7px;align-items:flex-start}
+.concern-dot{width:6px;height:6px;border-radius:50%;background:#EF9F27;margin-top:5px;flex-shrink:0}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;margin:2px}
+.tag-r{background:#FBEAF0;color:#72243E}.tag-b{background:#E6F1FB;color:#0C447C}.tag-a{background:#FAEEDA;color:#633806}
+
+/* API KEY */
+.api-bar{background:#FFF8E7;border:0.5px solid #EF9F27;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.api-bar input{flex:1;min-width:200px;padding:7px 10px;border:0.5px solid #D0CBC2;border-radius:6px;font-size:12px;font-family:'Courier New',monospace;background:#FFFFFF;color:#1C2331;margin:0}
+.api-bar button{padding:7px 14px;background:#993556;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.api-bar-label{font-size:12px;color:#633806;font-weight:500;white-space:nowrap}
+
+/* LOADING */
+.typing span{animation:blink 1s infinite;font-size:18px;color:#6B7A90}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
+
+/* EMPTY */
+.empty{text-align:center;padding:2rem;color:#6B7A90;font-size:13px;line-height:1.6}
+
+/* LEGEND */
+.legend-row{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#6B7A90}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* NOTICE */
+.notice{font-size:11px;color:#6B7A90;background:#F5F3EE;padding:9px 12px;border-radius:8px;line-height:1.55;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- PWA Install Banner -->
+  <div id="install-banner" style="display:none;background:#FBEAF0;border:0.5px solid #ED93B1;border-radius:12px;padding:12px 14px;margin-bottom:12px;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:500;color:#72243E">Install Floraly</div>
+      <div style="font-size:11px;color:#993556;margin-top:2px">Add to your home screen for the full app experience</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <button id="install-btn" style="padding:7px 14px;background:#993556;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit">Install</button>
+      <button id="dismiss-install" style="padding:7px 10px;background:transparent;color:#993556;border:0.5px solid #ED93B1;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit">Not now</button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="topbar">
+    <div>
+      <div class="logo">Flor<span>aly</span></div>
+      <div style="font-size:12px;color:#6B7A90;margin-top:1px">AI cycle intelligence</div>
+    </div>
+    <span class="pill p-amber" id="phase-pill">Loading...</span>
+  </div>
+
+  <!-- API KEY BAR -->
+  <div class="api-bar">
+    <span class="api-bar-label">Anthropic API key</span>
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." autocomplete="off">
+    <button onclick="saveKey()">Save key</button>
+  </div>
+  <div id="key-status" style="font-size:11px;color:#27500A;margin-bottom:8px;display:none">API key saved. AI features are active.</div>
+
+  <!-- Notification permission -->
+  <div id="notif-bar" style="background:#EAF3DE;border:0.5px solid #97C459;border-radius:8px;padding:9px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:12px;font-weight:500;color:#27500A">Daily log reminder</div>
+      <div style="font-size:11px;color:#3B6D11">Get a nudge each evening to log your symptoms</div>
+    </div>
+    <button onclick="requestNotifications().then(g=>alert(g?'Reminders enabled!':'Permission denied — enable in browser settings'))" style="padding:6px 12px;background:#639922;color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap">Enable reminders</button>
+  </div>
+  <!-- NAV -->
+  <div class="nav">
+    <button class="active" onclick="showScreen('home',this)">Home</button>
+    <button onclick="showScreen('log',this)">Log</button>
+    <button onclick="showScreen('chat',this)">AI Chat</button>
+    <button onclick="showScreen('insights',this)">Insights</button>
+    <button onclick="showScreen('report',this)">Dr Report</button>
+  </div>
+
+  <!-- ════════════ HOME ════════════ -->
+  <div id="screen-home" class="screen active">
+    <div class="mrow">
+      <div class="mbox"><div class="mval" id="m-until">--</div><div class="mlbl">days until period</div></div>
+      <div class="mbox"><div class="mval" id="m-cday">--</div><div class="mlbl">cycle day</div></div>
+      <div class="mbox"><div class="mval" id="m-avg">--</div><div class="mlbl">avg cycle (days)</div></div>
+    </div>
+    <div class="card">
+      <div class="card-label">This cycle</div>
+      <div class="day-row" id="cycle-dots"></div>
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:#FBEAF0;border:0.5px solid #ED93B1"></div>Period</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#E6F1FB;border:0.5px solid #85B7EB"></div>Fertile</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#EEEDFE;border:0.5px solid #AFA9EC"></div>Ovulation</div>
+        <div class="legend-item"><div class="legend-dot" style="border:2px solid #1C2331;background:transparent"></div>Today</div>
+        <div class="legend-item"><div class="legend-dot" style="background:transparent;border:0.5px dashed #D2D2D7"></div>Predicted</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Today's snapshot</div>
+      <div id="today-snapshot" style="font-size:13px;color:#6B7A90;line-height:1.65">Log your first period to see personalised daily insights.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Cycle history</div>
+      <div id="history-list"><div class="empty">No cycle data yet. Go to Log to record your first period.</div></div>
+    </div>
+  </div>
+
+  <!-- ════════════ LOG ════════════ -->
+  <div id="screen-log" class="screen">
+    <div class="card">
+      <div class="card-label">Log period start</div>
+      <input type="date" id="period-date">
+      <select id="period-dur" style="margin-bottom:10px">
+        <option value="">Select period duration...</option>
+        <option value="2">2 days</option>
+        <option value="3">3 days</option>
+        <option value="4">4 days</option>
+        <option value="5">5 days</option>
+        <option value="6">6 days</option>
+        <option value="7">7 days</option>
+        <option value="8">8 days</option>
+      </select>
+      <button class="btn-primary" onclick="logPeriod()">Save period</button>
+      <div id="period-saved" style="display:none;margin-top:8px;font-size:13px;color:#27500A;background:#EAF3DE;padding:9px 12px;border-radius:8px">Period saved successfully.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Log today's symptoms</div>
+      <div style="font-size:11px;font-weight:600;color:#6B7A90;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Physical</div>
+      <div class="chip-group" id="chips-physical">
+        <div class="chip" onclick="this.classList.toggle('on')">Cramps</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Bloating</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Headache</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Backache</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Fatigue</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Nausea</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Breast tenderness</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Spotting</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Acne</div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:#6B7A90;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Mood</div>
+      <div class="chip-group" id="chips-mood">
+        <div class="chip" onclick="this.classList.toggle('on')">Happy</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Calm</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Anxious</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Irritable</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Low energy</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Emotional</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Focused</div>
+        <div class="chip" onclick="this.classList.toggle('on')">Sensitive</div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:#6B7A90;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Flow (if on period)</div>
+      <div class="chip-group" id="chips-flow">
+        <div class="chip" onclick="selectFlow(this)">Light</div>
+        <div class="chip" onclick="selectFlow(this)">Medium</div>
+        <div class="chip" onclick="selectFlow(this)">Heavy</div>
+        <div class="chip" onclick="selectFlow(this)">Very heavy</div>
+        <div class="chip" onclick="selectFlow(this)">Spotting</div>
+        <div class="chip" onclick="selectFlow(this)">None</div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:#6B7A90;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Energy level (1 = exhausted, 10 = great)</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span style="font-size:12px;color:#6B7A90;white-space:nowrap">1</span>
+        <input type="range" min="1" max="10" step="1" value="5" id="energy-slider" oninput="document.getElementById('energy-val').textContent=this.value">
+        <span style="font-size:12px;color:#6B7A90;white-space:nowrap">10</span>
+        <span style="font-size:16px;font-weight:500;min-width:20px;color:#1C2331" id="energy-val">5</span>
+      </div>
+      <textarea id="log-notes" placeholder="Any other notes for today..." style="height:70px;resize:none;margin-bottom:4px"></textarea>
+      <button class="btn-primary" onclick="saveSymptoms()">Save today's log</button>
+      <div id="sym-saved" style="display:none;margin-top:8px;font-size:13px;color:#27500A;background:#EAF3DE;padding:9px 12px;border-radius:8px">Floraly has logged your symptoms for today.</div>
+    </div>
+  </div>
+
+  <!-- ════════════ CHAT ════════════ -->
+  <div id="screen-chat" class="screen">
+    <div class="card">
+      <div class="card-label">AI symptom chat</div>
+      <div class="notice">Floraly has full context of your logged cycle data and will answer based on your actual patterns — not generic advice. Enter your API key above to activate.</div>
+      <div class="sug-row">
+        <div class="sug" onclick="fillChat('Is my cycle length normal?')">Is my cycle normal?</div>
+        <div class="sug" onclick="fillChat('Why am I so tired in my luteal phase?')">Why so tired?</div>
+        <div class="sug" onclick="fillChat('What helps with PMS cramps?')">Help with cramps</div>
+        <div class="sug" onclick="fillChat('When is my next fertile window?')">Fertile window</div>
+        <div class="sug" onclick="fillChat('What should I expect in the next few days?')">What to expect</div>
+        <div class="sug" onclick="fillChat('Why do I feel so different each week of my cycle?')">Phase changes</div>
+      </div>
+      <div class="chat-box" id="chat-msgs">
+        <div class="msg ai">
+          <div class="av floraly">F</div>
+          <div class="bub">Hi! I'm Floraly, your AI cycle companion. Once you've logged some cycle data, I'll have full context to give you personalised answers. Ask me anything — unusual symptoms, what's normal for your phase, how your patterns have changed, or when your next fertile window is.</div>
+        </div>
+      </div>
+      <div class="chat-inp-row">
+        <input id="chat-input" placeholder="Ask Floraly about your cycle..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button id="chat-send-btn" onclick="sendChat()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ INSIGHTS ════════════ -->
+  <div id="screen-insights" class="screen">
+    <div class="card">
+      <div class="card-label">AI pattern analysis</div>
+      <div class="notice">Floraly analyses your symptom logs, energy data, and cycle history to surface patterns no other app will show you. Requires API key and at least 2 weeks of symptom logging.</div>
+      <div id="insights-content"><div class="empty">Generate insights to see your personalised cycle patterns.</div></div>
+      <button class="btn-primary" id="insights-btn" onclick="generateInsights()">Generate AI insights</button>
+    </div>
+    <div class="card">
+      <div class="card-label">Energy by cycle phase</div>
+      <div id="energy-chart"><div class="empty" style="padding:1rem">Log daily energy levels to see your phase patterns.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Most logged symptoms</div>
+      <div id="symptom-freq"><div class="empty" style="padding:1rem">Log symptoms daily to see your frequency map.</div></div>
+    </div>
+  </div>
+
+  <!-- ════════════ DR REPORT ════════════ -->
+  <div id="screen-report" class="screen">
+    <div class="card">
+      <div class="card-label">Doctor visit prep report</div>
+      <div class="notice">Floraly generates a clinical summary of your cycle history, symptoms, and patterns — ready to share with your doctor or gynaecologist. Copy the text or screenshot the page.</div>
+      <div id="report-content"><div class="empty">Generate your report to see a clinical summary of your cycle data, flagged concerns, and suggested questions for your doctor.</div></div>
+      <button class="btn-primary" id="report-btn" onclick="generateReport()">Generate doctor report</button>
+      <button class="btn-secondary" id="copy-btn" onclick="copyReport()" style="display:none">Copy report text</button>
+    </div>
+    <div class="card">
+      <div class="card-label">What this report includes</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:6px;height:6px;border-radius:50%;background:#993556;margin-top:5px;flex-shrink:0"></div><div style="font-size:13px;color:#6B7A90">Cycle length history and regularity assessment</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:6px;height:6px;border-radius:50%;background:#378ADD;margin-top:5px;flex-shrink:0"></div><div style="font-size:13px;color:#6B7A90">Most frequent symptoms by cycle phase</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:6px;height:6px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0"></div><div style="font-size:13px;color:#6B7A90">Mood and energy patterns across your cycle</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:6px;height:6px;border-radius:50%;background:#EF9F27;margin-top:5px;flex-shrink:0"></div><div style="font-size:13px;color:#6B7A90">AI-flagged symptoms worth discussing with your doctor</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:6px;height:6px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0"></div><div style="font-size:13px;color:#6B7A90">Suggested questions to ask your doctor</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'floraly_data_v1';
+
+function loadData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { cycles: [], symptoms: {}, apiKey: '' };
+  } catch(e) {
+    return { cycles: [], symptoms: {}, apiKey: '' };
+  }
+}
+
+function saveData(d) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch(e) {}
+}
+
+let state = loadData();
+let chatHistory = [];
+let lastReport = null;
+
+// ── API KEY ───────────────────────────────────────────────────────────────────
+function saveKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) return;
+  state.apiKey = key;
+  saveData(state);
+  document.getElementById('api-key-input').value = '';
+  document.getElementById('api-key-input').placeholder = 'Key saved (hidden for security)';
+  document.getElementById('key-status').style.display = 'block';
+  setTimeout(() => document.getElementById('key-status').style.display = 'none', 3000);
+}
+
+if (state.apiKey) {
+  document.getElementById('api-key-input').placeholder = 'Key saved (hidden for security)';
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function showScreen(name, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'home') renderHome();
+  if (name === 'insights') renderInsightsCharts();
+}
+
+// ── CYCLE CALCULATIONS ────────────────────────────────────────────────────────
+function getLastCycle() {
+  return state.cycles.length ? state.cycles[state.cycles.length - 1] : null;
+}
+
+function calcAvgCycle() {
+  if (state.cycles.length < 2) return 28;
+  const lengths = [];
+  for (let i = 1; i < state.cycles.length; i++) {
+    const diff = Math.round((new Date(state.cycles[i].start) - new Date(state.cycles[i-1].start)) / 86400000);
+    if (diff > 10 && diff < 60) lengths.push(diff);
+  }
+  return lengths.length ? Math.round(lengths.reduce((a,b)=>a+b,0)/lengths.length) : 28;
+}
+
+function getCycleDay(startDate) {
+  const diff = Math.floor((new Date() - new Date(startDate)) / 86400000);
+  return diff + 1;
+}
+
+function getPhase(cDay, avgCycle, periodDur) {
+  if (cDay <= periodDur) return 'period';
+  if (cDay <= 7) return 'follicular';
+  const ov = Math.round(avgCycle / 2);
+  if (Math.abs(cDay - ov) <= 1) return 'ovulation';
+  if (cDay > ov && cDay <= ov + 4) return 'fertile';
+  if (cDay > avgCycle - 7) return 'luteal';
+  return 'follicular';
+}
+
+const phaseInfo = {
+  period:     { label: 'Menstruation',    pillClass: 'p-rose',   desc: 'Your period is here. Rest when needed, stay hydrated, and use heat for cramps. Iron-rich foods can help with energy.' },
+  follicular: { label: 'Follicular phase', pillClass: 'p-blue',   desc: 'Oestrogen is rising. Energy and mood tend to improve. A great time for new projects, socialising, and exercise.' },
+  ovulation:  { label: 'Ovulation',        pillClass: 'p-purple', desc: 'Peak fertility window. Many people feel their most energetic and confident around ovulation.' },
+  fertile:    { label: 'Fertile window',   pillClass: 'p-purple', desc: 'High fertility period. Progesterone begins to rise after ovulation.' },
+  luteal:     { label: 'Luteal phase',     pillClass: 'p-amber',  desc: 'Progesterone peaks then drops towards your period. PMS symptoms may begin. Prioritise sleep and self-care.' },
+};
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+function renderHome() {
+  const last = getLastCycle();
+  const avg = calcAvgCycle();
+  document.getElementById('m-avg').textContent = avg;
+
+  if (!last) {
+    document.getElementById('m-until').textContent = '--';
+    document.getElementById('m-cday').textContent = '--';
+    document.getElementById('phase-pill').className = 'pill p-rose';
+    document.getElementById('phase-pill').textContent = 'Log period';
+    renderCycleDots(null, avg, 5);
+    renderHistoryList();
+    return;
+  }
+
+  const pd = parseInt(last.duration) || 5;
+  const cDay = getCycleDay(last.start);
+  const daysUntil = Math.max(0, avg - cDay);
+  const phase = getPhase(cDay, avg, pd);
+  const info = phaseInfo[phase];
+
+  document.getElementById('m-until').textContent = daysUntil;
+  document.getElementById('m-cday').textContent = cDay;
+  document.getElementById('phase-pill').className = 'pill ' + info.pillClass;
+  document.getElementById('phase-pill').textContent = info.label;
+  document.getElementById('today-snapshot').innerHTML = `<strong style="color:#1C2331">${info.label}</strong> — ${info.desc}`;
+
+  renderCycleDots(last.start, avg, pd);
+  renderHistoryList();
+}
+
+function renderCycleDots(startDate, avgCycle, periodDur) {
+  const wrap = document.getElementById('cycle-dots');
+  wrap.innerHTML = '';
+  const today = new Date();
+  const start = startDate ? new Date(startDate) : new Date(today.getTime() - 14 * 86400000);
+  const ovDay = Math.round(avgCycle / 2);
+
+  for (let d = 1; d <= avgCycle; d++) {
+    const el = document.createElement('div');
+    el.className = 'd';
+    el.textContent = d;
+    const dotDate = new Date(start.getTime() + (d-1) * 86400000);
+    const isToday = dotDate.toDateString() === today.toDateString();
+    if (d <= periodDur) el.classList.add('period');
+    else if (d === ovDay) el.classList.add('ov');
+    else if (d >= ovDay - 2 && d <= ovDay + 2) el.classList.add('fertile');
+    if (isToday) el.classList.add('today');
+    else if (dotDate < today) el.classList.add('past');
+    else el.classList.add('future');
+    wrap.appendChild(el);
+  }
+}
+
+function renderHistoryList() {
+  const el = document.getElementById('history-list');
+  if (!state.cycles.length) {
+    el.innerHTML = '<div class="empty">No cycle data yet. Go to Log to record your first period.</div>';
+    return;
+  }
+  const recent = [...state.cycles].reverse().slice(0, 5);
+  el.innerHTML = recent.map((c, i) => {
+    const origIdx = state.cycles.length - 1 - i;
+    let length = '--';
+    if (origIdx > 0) {
+      const diff = Math.round((new Date(c.start) - new Date(state.cycles[origIdx-1].start)) / 86400000);
+      length = diff + ' days';
+    }
+    const label = new Date(c.start).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+    return `<div class="hrow"><span style="font-weight:500;color:#1C2331">${label}</span><div style="display:flex;gap:8px;align-items:center"><span class="pill p-rose">${c.duration}d period</span><span style="color:#6B7A90;font-size:12px">${length}</span></div></div>`;
+  }).join('');
+}
+
+// ── LOG ───────────────────────────────────────────────────────────────────────
+document.getElementById('period-date').value = new Date().toISOString().split('T')[0];
+
+function selectFlow(el) {
+  document.querySelectorAll('#chips-flow .chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function logPeriod() {
+  const date = document.getElementById('period-date').value;
+  const dur = document.getElementById('period-dur').value;
+  if (!date || !dur) { alert('Please select both a date and duration.'); return; }
+  state.cycles.push({ start: date, duration: parseInt(dur), logged: new Date().toISOString() });
+  saveData(state);
+  const msg = document.getElementById('period-saved');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 2500);
+  renderHome();
+}
+
+function saveSymptoms() {
+  const today = new Date().toISOString().split('T')[0];
+  const physical = [...document.querySelectorAll('#chips-physical .chip.on')].map(c => c.textContent);
+  const mood = [...document.querySelectorAll('#chips-mood .chip.on')].map(c => c.textContent);
+  const flowEl = document.querySelector('#chips-flow .chip.on');
+  const flow = flowEl ? flowEl.textContent : '';
+  const energy = parseInt(document.getElementById('energy-slider').value);
+  const notes = document.getElementById('log-notes').value.trim();
+  const last = getLastCycle();
+  const cycleDay = last ? getCycleDay(last.start) : null;
+  const avg = calcAvgCycle();
+  const phase = last ? getPhase(cycleDay, avg, last.duration) : null;
+
+  state.symptoms[today] = { physical, mood, flow, energy, notes, cycleDay, phase, logged: new Date().toISOString() };
+  saveData(state);
+
+  document.querySelectorAll('#chips-physical .chip, #chips-mood .chip, #chips-flow .chip').forEach(c => c.classList.remove('on'));
+  document.getElementById('energy-slider').value = 5;
+  document.getElementById('energy-val').textContent = '5';
+  document.getElementById('log-notes').value = '';
+
+  const msg = document.getElementById('sym-saved');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 2500);
+  renderInsightsCharts();
+}
+
+// ── INSIGHTS CHARTS (no AI) ───────────────────────────────────────────────────
+function renderInsightsCharts() {
+  const sympDates = Object.keys(state.symptoms);
+  if (!sympDates.length) return;
+
+  // Energy by phase
+  const phaseEnergy = {};
+  sympDates.forEach(d => {
+    const s = state.symptoms[d];
+    if (s.phase && s.energy) {
+      if (!phaseEnergy[s.phase]) phaseEnergy[s.phase] = [];
+      phaseEnergy[s.phase].push(s.energy);
+    }
+  });
+
+  const phaseColors = { period: '#D4537E', follicular: '#378ADD', ovulation: '#7F77DD', fertile: '#AFA9EC', luteal: '#EF9F27' };
+  const phaseLabels = { period: 'Period', follicular: 'Follicular', ovulation: 'Ovulation', fertile: 'Fertile', luteal: 'Luteal' };
+
+  let energyHtml = '';
+  Object.entries(phaseEnergy).forEach(([ph, vals]) => {
+    const avg = (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+    const pct = Math.round((avg/10)*100);
+    energyHtml += `<div class="bar-row"><div class="bar-label"><span style="color:#1C2331;font-weight:500">${phaseLabels[ph]||ph}</span><span style="color:#6B7A90">${avg}/10</span></div><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${phaseColors[ph]||'#993556'}"></div></div></div>`;
+  });
+  if (energyHtml) document.getElementById('energy-chart').innerHTML = energyHtml;
+
+  // Symptom frequency
+  const all = sympDates.flatMap(d => [...(state.symptoms[d].physical||[]), ...(state.symptoms[d].mood||[])]);
+  if (all.length) {
+    const freq = {};
+    all.forEach(s => freq[s] = (freq[s]||0)+1);
+    const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const maxF = sorted[0][1];
+    document.getElementById('symptom-freq').innerHTML = sorted.map(([sym,cnt]) =>
+      `<div class="bar-row"><div class="bar-label"><span style="color:#1C2331">${sym}</span><span style="color:#6B7A90">${cnt}x</span></div><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(cnt/maxF*100)}%;background:#993556"></div></div></div>`
+    ).join('');
+  }
+}
+
+// ── AI CHAT ───────────────────────────────────────────────────────────────────
+function buildContext() {
+  const last = getLastCycle();
+  const avg = calcAvgCycle();
+  const count = state.cycles.length;
+  const sympDates = Object.keys(state.symptoms);
+  const recent = sympDates.slice(-7).map(d => state.symptoms[d]);
+  const allPhys = recent.flatMap(s => s.physical || []);
+  const allMood = recent.flatMap(s => s.mood || []);
+  const avgE = recent.length ? (recent.reduce((a,s)=>a+(s.energy||5),0)/recent.length).toFixed(1) : 'unknown';
+
+  let ctx = `User's Floraly cycle data:\n`;
+  ctx += `- Cycles logged: ${count}\n`;
+  ctx += `- Average cycle length: ${avg} days\n`;
+  ctx += `- Last period: ${last ? last.start : 'not logged'}, duration: ${last ? last.duration : 'unknown'} days\n`;
+  if (last) {
+    const cd = getCycleDay(last.start);
+    const ph = getPhase(cd, avg, last.duration);
+    ctx += `- Current cycle day: ${cd}, phase: ${ph}\n`;
+    ctx += `- Days until next period: ${Math.max(0, avg-cd)}\n`;
+  }
+  ctx += `- Recent physical symptoms: ${[...new Set(allPhys)].join(', ') || 'none logged'}\n`;
+  ctx += `- Recent mood: ${[...new Set(allMood)].join(', ') || 'none logged'}\n`;
+  ctx += `- Average energy recently: ${avgE}/10\n`;
+  return ctx;
+}
+
+function addChatMsg(role, text) {
+  const box = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  const av = document.createElement('div');
+  av.className = 'av ' + (role === 'ai' ? 'floraly' : 'user');
+  av.textContent = role === 'ai' ? 'F' : 'Me';
+  const bub = document.createElement('div');
+  bub.className = 'bub';
+  bub.textContent = text;
+  div.appendChild(av);
+  div.appendChild(bub);
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return bub;
+}
+
+function fillChat(t) {
+  document.getElementById('chat-input').value = t;
+  document.getElementById('chat-input').focus();
+}
+
+async function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  if (!state.apiKey) { alert('Please enter your Anthropic API key at the top of the page to use AI features.'); return; }
+
+  inp.value = '';
+  document.getElementById('chat-send-btn').disabled = true;
+  addChatMsg('u', txt);
+  chatHistory.push({ role: 'user', content: txt });
+
+  const bub = addChatMsg('ai', '');
+  bub.innerHTML = '<div class="typing"><span>.</span><span>.</span><span>.</span></div>';
+
+  const sys = `You are Floraly, a knowledgeable and empathetic AI cycle health companion. You provide personalised, evidence-based insights about menstrual health, symptoms, and cycle patterns. You are NOT a medical professional and always recommend consulting a doctor for medical concerns. Always refer to yourself as Floraly.\n\nUser's current cycle data:\n${buildContext()}\n\nGuidelines:\n- Be warm, conversational, and clear\n- Reference the user's actual data when relevant\n- Keep responses concise (2-4 sentences usually)\n- Flag when something warrants a doctor visit\n- Never diagnose conditions`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': state.apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: sys, messages: chatHistory.slice(-8) })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const reply = data.content?.[0]?.text || 'Sorry, I had trouble responding. Please try again.';
+    bub.textContent = reply;
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    bub.textContent = 'Could not connect. Please check your API key and try again.';
+  }
+  document.getElementById('chat-send-btn').disabled = false;
+}
+
+// ── AI INSIGHTS ───────────────────────────────────────────────────────────────
+async function generateInsights() {
+  if (!state.apiKey) { alert('Please enter your Anthropic API key at the top of the page.'); return; }
+  const btn = document.getElementById('insights-btn');
+  btn.textContent = 'Analysing your data...';
+  btn.disabled = true;
+
+  const prompt = `Analyse this user's menstrual cycle and symptom data and provide 4-5 specific, personalised insights.\n\nData:\n${buildContext()}\n\nFull symptom log:\n${JSON.stringify(state.symptoms)}\n\nRespond ONLY with a valid JSON array (no markdown):\n[{"title":"...","body":"...","type":"rose|blue|purple|amber|green"}]\n\nFocus on patterns actually present in the data. Be specific, not generic.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': state.apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = data.content?.[0]?.text || '[]';
+    const insights = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    document.getElementById('insights-content').innerHTML = insights.map(i =>
+      `<div class="icard ${i.type}"><div class="ititle">${i.title}</div><div class="ibody">${i.body}</div></div>`
+    ).join('');
+    renderInsightsCharts();
+  } catch(e) {
+    document.getElementById('insights-content').innerHTML = '<div class="empty">Could not generate insights. Check your API key and try again.</div>';
+  }
+  btn.textContent = 'Refresh insights';
+  btn.disabled = false;
+}
+
+// ── DOCTOR REPORT ─────────────────────────────────────────────────────────────
+async function generateReport() {
+  if (!state.apiKey) { alert('Please enter your Anthropic API key at the top of the page.'); return; }
+  const btn = document.getElementById('report-btn');
+  btn.textContent = 'Generating report...';
+  btn.disabled = true;
+
+  const avg = calcAvgCycle();
+  const prompt = `Generate a clinical doctor visit prep report based on this patient's menstrual cycle tracking data.\n\nData:\n${buildContext()}\n\nRespond ONLY with valid JSON (no markdown):\n{"patientSummary":"...","cycleStats":{"avgLength":"${avg} days","regularity":"...","avgPeriodDuration":"..."},"frequentSymptoms":["..."],"moodPatterns":"...","flaggedConcerns":["..."],"questionsForDoctor":["..."],"disclaimer":"..."}\n\nMake it clinically clear. Flag patterns worth discussing. Include 4 specific questions.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': state.apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = data.content?.[0]?.text || '{}';
+    const r = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    lastReport = r;
+
+    const today = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('report-content').innerHTML = `
+      <div style="font-size:11px;color:#6B7A90;background:#F5F3EE;padding:8px 12px;border-radius:8px;margin-bottom:14px">Generated ${today} · ${state.cycles.length} cycles logged · Floraly AI</div>
+      <div class="report-block"><h3>Patient summary</h3><div style="font-size:13px;color:#6B7A90;line-height:1.65">${r.patientSummary||''}</div></div>
+      <div class="report-block"><h3>Cycle statistics</h3>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+          <div class="mbox"><div class="mval" style="font-size:16px">${r.cycleStats?.avgLength||avg+' days'}</div><div class="mlbl">avg length</div></div>
+          <div class="mbox"><div class="mval" style="font-size:16px">${r.cycleStats?.avgPeriodDuration||'--'}</div><div class="mlbl">avg period</div></div>
+          <div class="mbox"><div class="mval" style="font-size:14px">${r.cycleStats?.regularity||'--'}</div><div class="mlbl">regularity</div></div>
+        </div>
+      </div>
+      <div class="report-block"><h3>Frequent symptoms</h3><div>${(r.frequentSymptoms||[]).map(s=>`<span class="tag tag-r">${s}</span>`).join('')||'<span style="font-size:13px;color:#6B7A90">None logged</span>'}</div></div>
+      <div class="report-block"><h3>Mood patterns</h3><div style="font-size:13px;color:#6B7A90;line-height:1.65">${r.moodPatterns||'Insufficient data.'}</div></div>
+      <div class="report-block"><h3>Areas to discuss with your doctor</h3>${(r.flaggedConcerns||[]).map(c=>`<div class="concern-item"><div class="concern-dot"></div><div style="font-size:13px;color:#6B7A90">${c}</div></div>`).join('')||'<div style="font-size:13px;color:#6B7A90">No specific concerns flagged.</div>'}</div>
+      <div class="report-block"><h3>Suggested questions for your doctor</h3>${(r.questionsForDoctor||[]).map((q,i)=>`<div class="doc-q"><div class="doc-q-num">${i+1}.</div><div class="doc-q-text">${q}</div></div>`).join('')}</div>
+      <div style="font-size:11px;color:#6B7A90;padding:10px;background:#F5F3EE;border-radius:8px;line-height:1.55">${r.disclaimer||'This report is for informational purposes only and does not constitute medical advice.'}</div>
+      <div style="font-size:11px;color:#6B7A90;margin-top:8px;text-align:right">Generated by Floraly AI · Your cycle, understood.</div>
+    `;
+    document.getElementById('copy-btn').style.display = 'block';
+  } catch(e) {
+    document.getElementById('report-content').innerHTML = '<div class="empty">Could not generate report. Check your API key and try again.</div>';
+  }
+  btn.textContent = 'Regenerate report';
+  btn.disabled = false;
+}
+
+function copyReport() {
+  if (!lastReport) return;
+  const r = lastReport;
+  const txt = `FLORALY CYCLE HEALTH REPORT\nGenerated: ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}\n\nSUMMARY\n${r.patientSummary}\n\nCYCLE STATS\nAvg length: ${r.cycleStats?.avgLength}\nRegularity: ${r.cycleStats?.regularity}\nAvg period: ${r.cycleStats?.avgPeriodDuration}\n\nFREQUENT SYMPTOMS\n${(r.frequentSymptoms||[]).join(', ')}\n\nMOOD PATTERNS\n${r.moodPatterns}\n\nFLAGGED CONCERNS\n${(r.flaggedConcerns||[]).map((c,i)=>`${i+1}. ${c}`).join('\n')}\n\nQUESTIONS FOR YOUR DOCTOR\n${(r.questionsForDoctor||[]).map((q,i)=>`${i+1}. ${q}`).join('\n')}\n\n${r.disclaimer}\n\nGenerated by Floraly AI — Your cycle, understood.`;
+  navigator.clipboard.writeText(txt)
+    .then(() => alert('Report copied to clipboard.'))
+    .catch(() => alert('Copy failed. Please select and copy manually.'));
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderHome();
+renderInsightsCharts();
+</script>
+
+<!-- PWA Install + Service Worker -->
+<script>
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('Floraly SW registered:', reg.scope))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+
+// Install prompt
+let deferredPrompt = null;
+const installBanner = document.getElementById('install-banner');
+const installBtn = document.getElementById('install-btn');
+const dismissBtn = document.getElementById('dismiss-install');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBanner) installBanner.style.display = 'flex';
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      installBanner.style.display = 'none';
+    }
+    deferredPrompt = null;
+  });
+}
+
+if (dismissBtn) {
+  dismissBtn.addEventListener('click', () => {
+    installBanner.style.display = 'none';
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  if (installBanner) installBanner.style.display = 'none';
+  deferredPrompt = null;
+});
+
+// Handle deep links from shortcuts
+const hash = window.location.hash;
+if (hash === '#log') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.querySelectorAll('.nav button')[1];
+    if (btn) { showScreen('log', btn); }
+  });
+} else if (hash === '#chat') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.querySelectorAll('.nav button')[2];
+    if (btn) { showScreen('chat', btn); }
+  });
+}
+
+// Notifications permission
+async function requestNotifications() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    const perm = await Notification.requestPermission();
+    return perm === 'granted';
+  }
+  return Notification.permission === 'granted';
+}
+</script>
+</body>
+</html>
