@@ -14,16 +14,16 @@
 <meta name="apple-mobile-web-app-title" content="Floraly">
 <meta name="application-name" content="Floraly">
 <meta name="msapplication-TileColor" content="#993556">
-<meta name="msapplication-TileImage" content="icons/icon-144.png">
+<meta name="msapplication-TileImage" content="icon-144.png">
 
 <!-- Apple Touch Icons -->
-<link rel="apple-touch-icon" href="icons/icon-152.png">
-<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
-<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icon-152.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
 
 <!-- Favicon -->
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icon-72.png">
 
 <!-- SEO -->
 <meta name="description" content="Floraly — AI-powered period tracking with conversational health insights, pattern analysis, and doctor visit prep reports. Your cycle, understood.">
@@ -31,7 +31,7 @@
 <meta property="og:title" content="Floraly — AI Cycle Intelligence">
 <meta property="og:description" content="AI-powered period tracking. Conversational insights, pattern analysis, and doctor visit prep. Built by Soni Saraswat.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="icons/icon-512.png">
+<meta property="og:image" content="icon-512.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FAFAF8;color:#1C2331;min-height:100vh}
@@ -801,7 +801,7 @@ renderInsightsCharts();
 // Register service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('/floraly-ai/sw.js')
       .then(reg => console.log('Floraly SW registered:', reg.scope))
       .catch(err => console.log('SW error:', err));
   });

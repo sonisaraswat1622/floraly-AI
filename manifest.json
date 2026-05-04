@@ -1,59 +1,63 @@
 {
-  "name": "Floraly — AI Cycle Intelligence",
+  "name": "Floraly \u2014 AI Cycle Intelligence",
   "short_name": "Floraly",
   "description": "AI-powered period tracking with conversational insights, pattern analysis, and doctor visit prep reports.",
-  "start_url": "/index.html",
+  "start_url": "/floraly-ai/index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FAFAF8",
   "theme_color": "#993556",
-  "categories": ["health", "lifestyle", "medical"],
+  "categories": [
+    "health",
+    "lifestyle",
+    "medical"
+  ],
   "lang": "en",
   "icons": [
     {
-      "src": "icons/icon-72.png",
+      "src": "icon-72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-96.png",
+      "src": "icon-96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-128.png",
+      "src": "icon-128.png",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-144.png",
+      "src": "icon-144.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-152.png",
+      "src": "icon-152.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-384.png",
+      "src": "icon-384.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -61,7 +65,7 @@
   ],
   "screenshots": [
     {
-      "src": "icons/screenshot-home.png",
+      "src": "screenshot-home.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
@@ -75,14 +79,25 @@
       "short_name": "Log",
       "description": "Log today's symptoms",
       "url": "/index.html#log",
-      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
     },
     {
       "name": "AI Chat",
       "short_name": "Chat",
       "description": "Chat with Floraly AI",
       "url": "/index.html#chat",
-      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
     }
-  ]
+  ],
+  "scope": "/floraly-ai/"
 }
